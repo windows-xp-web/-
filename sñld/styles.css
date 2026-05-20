@@ -1,0 +1,296 @@
+/* Reset & layout */
+:root{
+  --bg:#000;
+  --text:#dfe6e9;
+  --muted:#9aa4ad;
+  --corner-padding:20px; /* increased padding for larger feel */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body,#app{height:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow:hidden;
+}
+
+/* Stages cover the whole viewport */
+.stage{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--bg);
+  z-index:1;
+}
+
+/* Hidden helper */
+.hidden{display:none}
+
+/* Splash image — made larger so it fills more of the viewport */
+#splash-img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  transform:scale(1.02);
+  box-shadow:0 12px 40px rgba(0,0,0,0.6);
+  border-radius:10px;
+}
+
+/* Boot stage: show corner text top-left */
+#boot {
+  align-items:flex-start;
+  justify-content:flex-start;
+  padding:var(--corner-padding);
+  background:linear-gradient(180deg, #000 0%, #020202 100%);
+}
+
+/* Boot text container */
+#boot-text{
+  color:var(--text);
+  font-family:monospace;
+  font-size:18px; /* larger boot text */
+  line-height:1.6;
+  text-shadow:0 1px 0 rgba(0,0,0,0.6);
+  max-width:96%;
+}
+
+/* Each line style */
+.boot-line{
+  white-space:pre;
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity 220ms linear, transform 220ms linear;
+}
+
+/* Visible class toggles in via JS */
+.boot-line.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* BIOS / settings panel styling (white, full-screen panel) */
+/* Make the BIOS stage itself a white fullscreen surface and make the panel fill it */
+#bios{
+  background:#fff;
+  z-index: 50;
+}
+#bios-panel{
+  background:transparent;
+  color:#111;
+  width:100%;
+  max-width:none;
+  height:100%;
+  border-radius:0;
+  padding:22px; /* increased padding for breathing room */
+  box-shadow:none;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  max-height:100%;
+  overflow:auto;
+}
+#bios-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #eee;
+  padding-bottom:10px;
+}
+#bios-header h2{
+  font-family:var(--font);
+  font-size:20px; /* slightly larger */
+  margin:0;
+  color:#111;
+}
+.bios-hint{
+  color:#666;
+  font-size:14px;
+}
+
+/* Menu layout */
+.menu{
+  display:flex;
+  flex-direction:column;
+  gap:10px; /* more gap */
+  padding-top:10px;
+}
+.menu-group{
+  position:relative;
+}
+.menu-btn{
+  display:block;
+  width:100%;
+  text-align:left;
+  padding:14px 16px; /* larger tappable area */
+  border-radius:8px;
+  border:1px solid #e6e6e6;
+  background:#fafafa;
+  color:#111;
+  font-family:monospace;
+  font-size:16px; /* larger text */
+  cursor:pointer;
+}
+.menu-btn:active{transform:translateY(1px)}
+.submenu{
+  margin-top:8px;
+  margin-left:12px;
+  display:none;
+  flex-direction:column;
+  gap:8px;
+}
+.submenu.nested{margin-left:14px}
+.submenu.visible{display:flex}
+.submenu-item, .disk-item{
+  padding:12px 14px;
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:8px;
+  text-align:left;
+  font-family:monospace;
+  font-size:15px;
+  cursor:pointer;
+}
+.submenu-item:active,.disk-item:active{transform:translateY(1px)}
+#bios-footer{border-top:1px solid #f0f0f0;padding-top:10px;color:#666;font-size:14px}
+.muted{opacity:0.9}
+
+/* Virtual keyboard styles */
+.virtual-kbd{
+  position:fixed;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  background:#f7f7f7;
+  border:1px solid #e6e6e6;
+  border-radius:12px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  z-index:120;
+  box-shadow:0 8px 24px rgba(0,0,0,0.14);
+  touch-action: manipulation;
+}
+.virtual-kbd.hidden{display:none}
+.kbd-row{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+}
+.kbd-key{
+  min-width:56px; /* larger keys */
+  height:56px;
+  padding:10px 12px;
+  background:#fff;
+  border:1px solid #eaeaea;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:monospace;
+  font-size:17px; /* larger label */
+  color:#111;
+  user-select:none;
+  touch-action: manipulation;
+  cursor:pointer;
+}
+.kbd-key.wide{min-width:110px}
+.kbd-key:active{transform:translateY(1px)}
+#kbd-toggle{
+  margin-left:12px;
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:10px;
+  padding:8px 12px;
+  cursor:pointer;
+  font-size:17px;
+}
+#kbd-toggle[aria-pressed="true"]{
+  background:#e9f2ff;
+  border-color:#cfe6ff;
+}
+
+/* Iframe fills viewport */
+#runtime{background:#000}
+#site-frame{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+
+/* Corner Restart Button (made tiny and unobtrusive) */
+#restart-btn{
+  position:fixed;
+  top:10px;
+  right:10px;
+  z-index:200;
+  background:#fff;
+  color:#111;
+  border:1px solid #e6e6e6;
+  border-radius:8px;
+  padding:4px 6px; /* very compact */
+  font-family:monospace;
+  font-size:12px; /* tiny label */
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+  min-height:32px; /* compact touch size */
+  min-width:64px; /* compact width */
+  height:32px;
+  width:64px;
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+  justify-content:center;
+  touch-action:manipulation;
+  opacity:0.95;
+}
+#restart-btn:active{transform:translateY(1px) scale(0.995)}
+#restart-btn[disabled]{opacity:0.5;pointer-events:none}
+
+/* Small reveal control for mobile when restart is hidden */
+#restart-reveal{
+  position:fixed;
+  bottom:12px;
+  left:12px;
+  z-index:210;
+  background:#fff;
+  color:#111;
+  border:1px solid #e6e6e6;
+  border-radius:10px;
+  padding:8px 10px;
+  font-family:monospace;
+  font-size:14px;
+  height:36px;
+  min-width:36px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  touch-action:manipulation;
+}
+#restart-reveal.hidden{display:none}
+
+/* Small-screen adjustments */
+@media (max-width:420px){
+  #boot-text{font-size:16px}
+  #splash-img{max-width:100%}
+  /* Make restart button compact on narrow screens */
+  #restart-btn{
+    padding:8px 10px;
+    font-size:13px;
+    top:10px;
+    right:10px;
+    min-height:42px;
+    min-width:88px;
+  }
+  /* keyboard rows tighter on very small screens */
+  .kbd-key{min-width:50px;height:50px;font-size:16px}
+  .kbd-key.wide{min-width:96px}
+}
